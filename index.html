@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduVerse AI — The Ultimate AI Study Assistant for Engineering Students</title>
+  <meta name="description" content="Study Smarter. Score Higher. Build Your Career with AI. EduVerse AI is the world's most advanced AI study platform for engineering students." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="bg-aurora" id="bgAurora"></div>
+  <div class="particles-container" id="particles"></div>
+  <canvas id="three-canvas"></canvas>
+
+  <!-- Cursor Glow -->
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="18" fill="url(#logoGrad)" opacity="0.2"/>
+            <path d="M10 25L20 10L30 25H10Z" fill="url(#logoGrad)"/>
+            <circle cx="20" cy="22" r="5" fill="url(#logoGrad2)"/>
+            <defs>
+              <linearGradient id="logoGrad" x1="0" y1="0" x2="40" y2="40">
+                <stop offset="0%" stop-color="#2563EB"/>
+                <stop offset="100%" stop-color="#7C3AED"/>
+              </linearGradient>
+              <linearGradient id="logoGrad2" x1="0" y1="0" x2="40" y2="40">
+                <stop offset="0%" stop-color="#06B6D4"/>
+                <stop offset="100%" stop-color="#10B981"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <span class="logo-text">EduVerse <span class="logo-ai">AI</span></span>
+      </div>
+      <div class="nav-links" id="navLinks">
+        <a href="#hero" class="nav-link active" onclick="navigateTo('hero')">Home</a>
+        <a href="#features" class="nav-link" onclick="navigateTo('features')">Features</a>
+        <a href="#ai-tutor" class="nav-link" onclick="navigateTo('ai-tutor')">AI Tutor</a>
+        <a href="#placement-subjects" class="nav-link" onclick="navigateTo('placement-subjects')">Placement Subjects</a>
+        <a href="#dashboard" class="nav-link" onclick="navigateTo('dashboard')">Dashboard</a>
+      </div>
+      <div class="nav-actions">
+        <button class="btn-theme" id="themeToggle" onclick="toggleTheme()">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="btn-secondary" onclick="showModal('loginModal')">Log In</button>
+        <button class="btn-primary glow-btn" onclick="showModal('signupModal')">Get Started Free</button>
+        <button class="nav-hamburger" id="hamburger" onclick="toggleMenu()">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Authentication gate: shown until a valid account session exists. -->
+  <div class="auth-gate" id="authGate" aria-modal="true" role="dialog" aria-labelledby="authGateTitle">
+    <div class="auth-gate-card glass-card">
+      <div class="modal-logo"><div class="logo-icon small">🎓</div><span>EduVerse AI</span></div>
+      <div class="auth-gate-icon">✦</div>
+      <h1 id="authGateTitle">Your learning space is ready.</h1>
+      <p>Sign in or create a free account to access your AI tutor, study tools, and personal performance dashboard.</p>
+      <button class="social-btn google" type="button" onclick="socialLogin('google')">
+        <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+      <div class="or-divider"><span>or</span></div>
+      <div class="auth-gate-actions"><button class="btn-secondary" type="button" onclick="showModal('loginModal')">Sign In</button><button class="btn-primary glow-btn" type="button" onclick="showModal('signupModal')">Create Free Account</button></div>
+    </div>
+  </div>
+
+  <!-- Main App Container -->
+  <main id="mainContent">
+
+    <!-- ===================== HERO SECTION ===================== -->
+    <section id="hero" class="section hero-section active">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span>🚀 Powered by Prince</span>
+        </div>
+        <h1 class="hero-title">
+          <span class="title-line">Study</span>
+          <span class="title-line gradient-text">Smarter.</span>
+          <span class="title-line">Score Higher.</span>
+        </h1>
+        <p class="hero-subtitle">
+          The world's most advanced AI study platform for engineering students.
+          <br/>
+          <span id="typingText" class="typing-text"></span><span class="typing-cursor">|</span>
+        </p>
+        <div class="hero-cta">
+          <button class="btn-hero-primary glow-btn" onclick="showModal('signupModal')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            Start Learning Free
+          </button>
+          <button class="btn-hero-secondary" onclick="navigateTo('ai-tutor')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Watch Demo
+          </button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number" data-target="50000">0</span><span class="stat-suffix">+</span>
+            <span class="stat-label">Active Students</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number" data-target="200">0</span><span class="stat-suffix">+</span>
+            <span class="stat-label">Universities</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number" data-target="98">0</span><span class="stat-suffix">%</span>
+            <span class="stat-label">Success Rate</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number" data-target="1000">0</span><span class="stat-suffix">+</span>
+            <span class="stat-label">AI Features</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-3d-container" id="hero3D">
+          <!-- 3D Robot will be rendered here by Three.js -->
+          <div class="ai-robot-wrapper">
+            <div class="ai-robot">
+              <div class="robot-glow"></div>
+              <div class="robot-head">
+                <div class="robot-visor">
+                  <div class="robot-eye left"></div>
+                  <div class="robot-eye right"></div>
+                </div>
+                <div class="robot-antenna"></div>
+              </div>
+              <div class="robot-body">
+                <div class="robot-chest">
+                  <div class="robot-core"></div>
+                  <div class="robot-lights">
+                    <span></span><span></span><span></span>
+                  </div>
+                </div>
+              </div>
+              <div class="robot-arms">
+                <div class="robot-arm left"></div>
+                <div class="robot-arm right"></div>
+              </div>
+            </div>
+            <div class="floating-cards-hero">
+              <div class="float-card card1">
+                <div class="fc-icon">🤖</div>
+                <div class="fc-text">AI Tutor</div>
+              </div>
+              <div class="float-card card2">
+                <div class="fc-icon">📚</div>
+                <div class="fc-text">Smart Notes</div>
+              </div>
+              <div class="float-card card3">
+                <div class="fc-icon">💻</div>
+                <div class="fc-text">Code Lab</div>
+              </div>
+              <div class="float-card card4">
+                <div class="fc-icon">🏆</div>
+                <div class="fc-text">Placements</div>
+              </div>
+              <div class="float-card card5">
+                <div class="fc-icon">📊</div>
+                <div class="fc-text">Analytics</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Scroll Indicator -->
+      <div class="scroll-indicator">
+        <div class="scroll-dot"></div>
+        <span>Scroll to explore</span>
+      </div>
+    </section>
+
+    <!-- ===================== FEATURES SECTION ===================== -->
+    <section id="features" class="section features-section">
+      <div class="section-header">
+        <div class="section-badge">✨ Everything You Need</div>
+        <h2 class="section-title">Powered by <span class="gradient-text">AI Magic</span></h2>
+        <p class="section-subtitle">From PDF summarization to coding labs, we have everything an engineering student needs to excel.</p>
+      </div>
+      <div class="features-grid">
+
+        <div class="feature-card glass-card" data-feature="ai-pdf" onclick="openFeature('ai-pdf')">
+          <div class="fc-glow"></div>
+          <div class="feature-icon gradient-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <h3>AI PDF Assistant</h3>
+          <p>Upload any PDF, PPT, DOCX or image. AI summarizes, creates flashcards, quizzes, and predicts exam questions instantly.</p>
+          <div class="feature-tags">
+            <span>Summarize</span><span>Flashcards</span><span>Quiz</span><span>PYQ</span>
+          </div>
+          <div class="feature-arrow">→</div>
+        </div>
+
+        <div class="feature-card glass-card" data-feature="ai-tutor" onclick="navigateTo('ai-tutor')">
+          <div class="fc-glow purple"></div>
+          <div class="feature-icon gradient-purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <h3>AI Tutor</h3>
+          <p>Ask any question across Engineering, Medical, Coding, Math, Physics, Chemistry and get instant expert explanations.</p>
+          <div class="feature-tags">
+            <span>All Subjects</span><span>Voice</span><span>Multilingual</span>
+          </div>
+          <div class="feature-arrow">→</div>
+        </div>
+
+        <div class="feature-card glass-card" data-feature="coding" onclick="openFeature('coding')">
+          <div class="fc-glow cyan"></div>
+          <div class="feature-icon gradient-cyan">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h3>Coding Lab</h3>
+          <p>Full online IDE supporting Python, Java, C++, JS, SQL and more. AI-powered code review, debugging and optimization.</p>
+          <div class="feature-tags">
+            <span>15+ Languages</span><span>AI Debug</span><span>Compiler</span>
+          </div>
+          <div class="feature-arrow">→</div>
+        </div>
+
+        <div class="feature-card glass-card" data-feature="quiz" onclick="openFeature('quiz')">
+          <div class="fc-glow green"></div>
+          <div class="feature-icon gradient-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <h3>Smart Quiz Generator</h3>
+          <p>Generate MCQs, fill-ups, short and long answer questions with difficulty levels. Earn XP and compete on leaderboard.</p>
+          <div class="feature-tags">
+            <span>MCQ</span><span>Adaptive</span><span>Leaderboard</span>
+          </div>
+          <div class="feature-arrow">→</div>
+        </div>
+
+        <div class="feature-card glass-card" data-feature="planner" onclick="openFeature('planner')">
+          <div class="fc-glow amber"></div>
+          <div class="feature-icon gradient-amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <h3>AI Semester Planner</h3>
+          <p>Select your college, semester, branch and subjects. AI generates personalized daily, weekly, and monthly study plans.</p>
+          <div class="feature-tags">
+            <span>Daily Plan</span><span>Revision</span><span>Reminders</span>
+          </div>
+          <div class="feature-arrow">→</div>
+        </div>
+
+        <div class="feature-card glass-card" data-feature="placement" onclick="openFeature('placement')">
+          <div class="fc-glow rose"></div>
+          <div class="feature-icon gradient-rose">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <h3>Placement Hub</h3>
+          <p>Resume builder, ATS checker, mock interviews, coding tests, HR questions, and company-specific preparation kits.</p>
+          <div class="feature-tags">
+            <span>Resume</span><span>Mock Interview</span><span>Aptitude</span>
+          </div>
+          <div class="feature-arrow">→</div>
+        </div>
+
+        <div class="feature-card glass-card" data-feature="mindmap" onclick="openFeature('mindmap')">
+          <div class="fc-glow blue"></div>
+          <div class="feature-icon gradient-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          </div>
+          <h3>Mind Map Generator</h3>
+          <p>Auto-generate beautiful, interactive mind maps from any topic or document. Export as PNG or PDF instantly.</p>
+          <div class="feature-tags">
+            <span>Interactive</span><span>Auto-Generate</span><span>Export</span>
+          </div>
+          <div class="feature-arrow">→</div>
+        </div>
+
+        <div class="feature-card glass-card" data-feature="viva" onclick="openFeature('viva')">
+          <div class="fc-glow purple"></div>
+          <div class="feature-icon gradient-purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          </div>
+          <h3>Viva Preparation</h3>
+          <p>Practice with AI examiner via voice and camera. Get confidence analysis, speaking score, and instant feedback.</p>
+          <div class="feature-tags">
+            <span>Voice Mode</span><span>AI Examiner</span><span>Score</span>
+          </div>
+          <div class="feature-arrow">→</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== AI TUTOR SECTION ===================== -->
+    <section id="ai-tutor" class="section ai-tutor-section">
+      <div class="section-header">
+        <div class="section-badge">🤖 AI Tutor</div>
+        <h2 class="section-title">Your Personal <span class="gradient-text">AI Professor</span></h2>
+        <p class="section-subtitle">Ask anything. Get instant, expert-level explanations across all engineering domains.</p>
+      </div>
+      <div class="ai-chat-container">
+        <div class="ai-sidebar">
+          <div class="ai-avatar-container">
+            <div class="ai-avatar">
+              <div class="avatar-ring"></div>
+              <div class="avatar-core">
+                <div class="avatar-eyes">
+                  <div class="av-eye"></div>
+                  <div class="av-eye"></div>
+                </div>
+                <div class="avatar-mouth"></div>
+              </div>
+              <div class="avatar-pulse"></div>
+            </div>
+            <div class="ai-name">PRINCE</div>
+            <div class="ai-status">
+              <span class="status-dot green"></span> Online & Ready
+            </div>
+          </div>
+          <div class="subject-grid">
+            <button class="subj-btn active" onclick="selectSubject('Computer Science')">💻 CS</button>
+            <button class="subj-btn" onclick="selectSubject('Mathematics')">📐 Math</button>
+            <button class="subj-btn" onclick="selectSubject('Physics')">⚡ Physics</button>
+            <button class="subj-btn" onclick="selectSubject('Chemistry')">🧪 Chemistry</button>
+            <button class="subj-btn" onclick="selectSubject('AI & ML')">🧠 AI/ML</button>
+            <button class="subj-btn" onclick="selectSubject('Cyber Security')">🔒 Security</button>
+            <button class="subj-btn" onclick="selectSubject('Data Science')">📊 Data Sci</button>
+            <button class="subj-btn" onclick="selectSubject('Electronics')">🔌 ECE</button>
+            <button class="subj-btn" onclick="selectSubject('Mechanical')">⚙️ Mech</button>
+            <button class="subj-btn" onclick="selectSubject('Civil')">🏗️ Civil</button>
+          </div>
+          <div class="chat-history-panel">
+            <div class="ch-title">Recent Chats</div>
+            <div class="ch-item active">Neural Networks Basics</div>
+            <div class="ch-item">Data Structures - Trees</div>
+            <div class="ch-item">SQL Joins Explained</div>
+            <div class="ch-item">OSI Model Layers</div>
+          </div>
+        </div>
+        <div class="ai-chat-main">
+          <div class="chat-header">
+            <div class="chat-subject" id="currentSubject">💻 Computer Science</div>
+            <div class="chat-actions">
+              <button class="chat-action-btn" id="ttsToggleBtn" onclick="toggleTextToSpeech()" title="Turn speaker off" aria-label="Turn speaker off" aria-pressed="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+              </button>
+              <button class="chat-action-btn" onclick="clearChat()" title="Clear Chat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+              <button class="chat-action-btn" onclick="exportChat()" title="Download chat" aria-label="Download chat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-msg ai">
+              <div class="msg-avatar">🤖</div>
+              <div class="msg-bubble">
+                <p>Hello! I'm <strong>PRINCE</strong>, your AI tutor powered by Groq. I can help you with any engineering subject — from algorithms to quantum mechanics!</p>
+                <p>What would you like to learn today? 🚀</p>
+                <div class="quick-prompts">
+                  <button onclick="sendQuickPrompt('Explain machine learning algorithms')">🧠 Machine Learning</button>
+                  <button onclick="sendQuickPrompt('Explain data structures and algorithms')">📊 DSA</button>
+                  <button onclick="sendQuickPrompt('How does TCP/IP work?')">🌐 Networks</button>
+                  <button onclick="sendQuickPrompt('Explain DBMS concepts')">🗃️ DBMS</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+              <button class="input-action" id="voiceBtn" onclick="toggleVoice()" title="Voice Input">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+              </button>
+              <textarea
+                id="chatInput"
+                class="chat-input"
+                placeholder="Ask anything about engineering... (Press Enter to send)"
+                rows="1"
+                onkeydown="handleChatKey(event)"
+                oninput="autoResize(this)"
+              ></textarea>
+              <button class="input-action" onclick="uploadFile()" title="Upload File">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+              </button>
+              <button class="btn-send" id="sendBtn" onclick="sendMessage()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+            <div class="chat-footer-info">
+              <span>AI may make mistakes. Verify important information.</span>
+              <span>Powered by Prince</span>
+            </div>
+          </div>
+        </div>
+        <div class="ai-tools-panel">
+          <div class="tools-title">AI Tools</div>
+          <div class="ai-tool-item" onclick="generateNotes()">
+            <div class="tool-icon">📝</div>
+            <div class="tool-info">
+              <div class="tool-name">Generate Notes</div>
+              <div class="tool-desc">One-click smart notes</div>
+            </div>
+          </div>
+          <div class="ai-tool-item" onclick="generateFlashcards()">
+            <div class="tool-icon">🃏</div>
+            <div class="tool-info">
+              <div class="tool-name">Flashcards</div>
+              <div class="tool-desc">Quick revision cards</div>
+            </div>
+          </div>
+          <div class="ai-tool-item" onclick="generateMindMap()">
+            <div class="tool-icon">🗺️</div>
+            <div class="tool-info">
+              <div class="tool-name">Mind Map</div>
+              <div class="tool-desc">Visual learning</div>
+            </div>
+          </div>
+          <div class="ai-tool-item" onclick="generateQuiz()">
+            <div class="tool-icon">🎯</div>
+            <div class="tool-info">
+              <div class="tool-name">Quiz Me</div>
+              <div class="tool-desc">Test your knowledge</div>
+            </div>
+          </div>
+          <div class="ai-tool-item" onclick="translateText()">
+            <div class="tool-icon">🌐</div>
+            <div class="tool-info">
+              <div class="tool-name">Translate</div>
+              <div class="tool-desc">Multilingual support</div>
+            </div>
+          </div>
+          <div class="ai-tool-item" onclick="openCodeLab()">
+            <div class="tool-icon">💻</div>
+            <div class="tool-info">
+              <div class="tool-name">Code Lab</div>
+              <div class="tool-desc">Write & run code</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== DASHBOARD SECTION ===================== -->
+    <section id="dashboard" class="section dashboard-section">
+      <div class="section-header">
+        <div class="section-badge">📊 Dashboard</div>
+        <h2 class="section-title">Your <span class="gradient-text">Learning Journey</span></h2>
+        <p class="section-subtitle">Track your progress, streaks, achievements and upcoming milestones.</p>
+      </div>
+      <div class="dashboard-grid">
+        <!-- Stats Cards -->
+        <div class="dash-stats-row">
+          <button type="button" class="dash-stat-card glass-card dashboard-action" data-dashboard-action="hours">
+            <div class="ds-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <div class="ds-info">
+              <div class="ds-value">142h</div>
+              <div class="ds-label">Study Hours</div>
+            </div>
+            <div class="ds-trend up">+12% ↑</div>
+          </button>
+          <button type="button" class="dash-stat-card glass-card dashboard-action" data-dashboard-action="xp">
+            <div class="ds-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+            <div class="ds-info">
+              <div class="ds-value">2,840</div>
+              <div class="ds-label">XP Earned</div>
+            </div>
+            <div class="ds-trend up">+340 ↑</div>
+          </button>
+          <button type="button" class="dash-stat-card glass-card dashboard-action" data-dashboard-action="rank">
+            <div class="ds-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div class="ds-info">
+              <div class="ds-value">#47</div>
+              <div class="ds-label">Global Rank</div>
+            </div>
+            <div class="ds-trend up">+23 ↑</div>
+          </button>
+          <button type="button" class="dash-stat-card glass-card dashboard-action" data-dashboard-action="streak">
+            <div class="ds-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div class="ds-info">
+              <div class="ds-value">21</div>
+              <div class="ds-label">Day Streak 🔥</div>
+            </div>
+            <div class="ds-trend up">Keep it up!</div>
+          </button>
+        </div>
+
+        <div class="dashboard-insight glass-card" id="dashboardInsight" aria-live="polite">
+          <div class="insight-icon">✦</div>
+          <div><span class="insight-kicker">Live performance insight</span><p id="dashboardInsightText">Loading your personalized learning insight…</p></div>
+          <button type="button" class="insight-action" id="dashboardInsightAction">View next step</button>
+        </div>
+
+        <!-- Chart Area -->
+        <div class="dash-chart-card glass-card">
+          <div class="chart-header">
+            <h3>Study Activity</h3>
+            <div class="chart-tabs">
+              <button class="ctab active" onclick="switchChart('week')">Week</button>
+              <button class="ctab" onclick="switchChart('month')">Month</button>
+              <button class="ctab" onclick="switchChart('year')">Year</button>
+            </div>
+          </div>
+          <div class="chart-area" id="studyChart">
+            <canvas id="activityCanvas"></canvas>
+          </div>
+        </div>
+
+        <!-- Subject Progress -->
+        <div class="dash-progress-card glass-card">
+          <h3>Subject Mastery</h3>
+          <div class="progress-list">
+            <div class="prog-item">
+              <div class="prog-header">
+                <span>Data Structures</span>
+                <span class="prog-pct">87%</span>
+              </div>
+              <div class="prog-bar"><div class="prog-fill blue" style="width:87%"></div></div>
+            </div>
+            <div class="prog-item">
+              <div class="prog-header">
+                <span>Algorithms</span>
+                <span class="prog-pct">72%</span>
+              </div>
+              <div class="prog-bar"><div class="prog-fill purple" style="width:72%"></div></div>
+            </div>
+            <div class="prog-item">
+              <div class="prog-header">
+                <span>DBMS</span>
+                <span class="prog-pct">91%</span>
+              </div>
+              <div class="prog-bar"><div class="prog-fill green" style="width:91%"></div></div>
+            </div>
+            <div class="prog-item">
+              <div class="prog-header">
+                <span>Computer Networks</span>
+                <span class="prog-pct">65%</span>
+              </div>
+              <div class="prog-bar"><div class="prog-fill cyan" style="width:65%"></div></div>
+            </div>
+            <div class="prog-item">
+              <div class="prog-header">
+                <span>Operating Systems</span>
+                <span class="prog-pct">58%</span>
+              </div>
+              <div class="prog-bar"><div class="prog-fill amber" style="width:58%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Achievements -->
+        <div class="dash-achievements-card glass-card">
+          <h3>Achievements 🏆</h3>
+          <div class="achievements-grid">
+            <div class="achieve-badge earned" title="First Login">🌟</div>
+            <div class="achieve-badge earned" title="7 Day Streak">🔥</div>
+            <div class="achieve-badge earned" title="Quiz Master">🎯</div>
+            <div class="achieve-badge earned" title="Code Wizard">💻</div>
+            <div class="achieve-badge earned" title="Note Taker">📝</div>
+            <div class="achieve-badge earned" title="Speed Learner">⚡</div>
+            <div class="achieve-badge" title="30 Day Streak">🏆</div>
+            <div class="achieve-badge" title="Top Ranker">👑</div>
+            <div class="achieve-badge" title="PDF Master">📚</div>
+            <div class="achieve-badge" title="Placement Ready">💼</div>
+          </div>
+        </div>
+
+        <!-- Upcoming Events -->
+        <div class="dash-events-card glass-card">
+          <h3>Upcoming 📅</h3>
+          <div class="events-list">
+            <div class="event-item">
+              <div class="event-date">
+                <span class="ev-day">15</span>
+                <span class="ev-month">Aug</span>
+              </div>
+              <div class="event-info">
+                <div class="ev-title">DBMS Exam</div>
+                <div class="ev-sub">Unit 3 & 4 • 3 Hours</div>
+              </div>
+              <div class="ev-badge danger">2 days</div>
+            </div>
+            <div class="event-item">
+              <div class="event-date">
+                <span class="ev-day">20</span>
+                <span class="ev-month">Aug</span>
+              </div>
+              <div class="event-info">
+                <div class="ev-title">Algorithm Assignment</div>
+                <div class="ev-sub">Sorting & Graphs • Submit</div>
+              </div>
+              <div class="ev-badge warning">7 days</div>
+            </div>
+            <div class="event-item">
+              <div class="event-date">
+                <span class="ev-day">28</span>
+                <span class="ev-month">Aug</span>
+              </div>
+              <div class="event-info">
+                <div class="ev-title">Mock Interview</div>
+                <div class="ev-sub">Placement Prep • Google</div>
+              </div>
+              <div class="ev-badge success">15 days</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="dash-leaderboard-card glass-card">
+          <h3>🏅 Leaderboard</h3>
+          <div class="leader-list">
+            <div class="leader-item rank1">
+              <span class="leader-rank">🥇</span>
+              <div class="leader-avatar">A</div>
+              <div class="leader-info">
+                <div class="leader-name">Arjun K.</div>
+                <div class="leader-uni">IIT Bombay</div>
+              </div>
+              <div class="leader-xp">5,820 XP</div>
+            </div>
+            <div class="leader-item rank2">
+              <span class="leader-rank">🥈</span>
+              <div class="leader-avatar">P</div>
+              <div class="leader-info">
+                <div class="leader-name">Priya S.</div>
+                <div class="leader-uni">NIT Trichy</div>
+              </div>
+              <div class="leader-xp">5,410 XP</div>
+            </div>
+            <div class="leader-item rank3">
+              <span class="leader-rank">🥉</span>
+              <div class="leader-avatar">R</div>
+              <div class="leader-info">
+                <div class="leader-name">Rohan M.</div>
+                <div class="leader-uni">BITS Pilani</div>
+              </div>
+              <div class="leader-xp">4,980 XP</div>
+            </div>
+            <div class="leader-item you">
+              <span class="leader-rank">#47</span>
+              <div class="leader-avatar you-av">Y</div>
+              <div class="leader-info">
+                <div class="leader-name">You</div>
+                <div class="leader-uni">VTU</div>
+              </div>
+              <div class="leader-xp">2,840 XP</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== PLACEMENT SUBJECTS SECTION ===================== -->
+    <section id="placement-subjects" class="section pricing-section placement-subjects-section">
+      <div class="section-header">
+        <div class="section-badge">💰 Pricing</div>
+        <h2 class="section-title">Placement <span class="gradient-text">Subject Mastery</span></h2>
+        <p class="section-subtitle">Choose a subject to explore its chapters, simple explanation, and important interview questions.</p>
+        <div class="placement-subject-grid" id="placementSubjectGrid">
+          <button onclick="showPlacementSubject('Data Structures')" class="placement-subject-card"><strong>Data Structures</strong><span>Arrays, stacks, trees, graphs</span></button>
+          <button onclick="showPlacementSubject('Algorithms')" class="placement-subject-card"><strong>Algorithms</strong><span>Sorting, searching, DP, greedy</span></button>
+          <button onclick="showPlacementSubject('DBMS')" class="placement-subject-card"><strong>DBMS</strong><span>SQL, normalization, transactions</span></button>
+          <button onclick="showPlacementSubject('Operating Systems')" class="placement-subject-card"><strong>Operating Systems</strong><span>Processes, memory, scheduling</span></button>
+          <button onclick="showPlacementSubject('Computer Networks')" class="placement-subject-card"><strong>Computer Networks</strong><span>OSI, TCP/IP, HTTP, DNS</span></button>
+          <button onclick="showPlacementSubject('OOP')" class="placement-subject-card"><strong>OOP</strong><span>Classes, inheritance, design</span></button>
+          <button onclick="showPlacementSubject('System Design')" class="placement-subject-card"><strong>System Design</strong><span>Scalability, caching, databases</span></button>
+          <button onclick="showPlacementSubject('Software Engineering')" class="placement-subject-card"><strong>Software Engineering</strong><span>SDLC, testing, Git, Agile</span></button>
+          <button onclick="showPlacementSubject('Aptitude')" class="placement-subject-card"><strong>Aptitude</strong><span>Quant, reasoning, verbal ability</span></button>
+        </div>
+        <div id="placementSubjectDetails" class="placement-subject-details" aria-live="polite"></div>
+        <div class="pricing-toggle">
+          <span>Monthly</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="billingToggle" onchange="toggleBilling()">
+            <span class="toggle-slider"></span>
+          </label>
+          <span>Yearly <span class="save-badge">Save 40%</span></span>
+        </div>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card glass-card">
+          <div class="plan-badge">Free</div>
+          <div class="plan-price">
+            <span class="currency">₹</span>
+            <span class="amount" data-monthly="0" data-yearly="0">0</span>
+            <span class="period">/month</span>
+          </div>
+          <div class="plan-name">Starter</div>
+          <ul class="plan-features">
+            <li>✅ 20 AI Chats / day</li>
+            <li>✅ 3 PDF Uploads / month</li>
+            <li>✅ Basic Quiz Generator</li>
+            <li>✅ Semester Planner</li>
+            <li>✅ 5 Code Runs / day</li>
+            <li>❌ Voice Tutor</li>
+            <li>❌ Placement Hub</li>
+            <li>❌ Advanced Analytics</li>
+            <li>❌ Offline Access</li>
+          </ul>
+          <button class="plan-btn secondary" onclick="showModal('signupModal')">Get Started Free</button>
+        </div>
+        <div class="pricing-card glass-card featured">
+          <div class="plan-badge featured">⭐ Most Popular</div>
+          <div class="plan-price">
+            <span class="currency">₹</span>
+            <span class="amount" data-monthly="499" data-yearly="299">499</span>
+            <span class="period">/month</span>
+          </div>
+          <div class="plan-name">Premium</div>
+          <ul class="plan-features">
+            <li>✅ Unlimited AI Chats</li>
+            <li>✅ Unlimited PDF Uploads</li>
+            <li>✅ Advanced Quiz + MCQ</li>
+            <li>✅ AI Voice Tutor (11 Languages)</li>
+            <li>✅ Placement Hub</li>
+            <li>✅ Coding Lab (15+ Languages)</li>
+            <li>✅ Advanced Analytics</li>
+            <li>✅ Mind Map Generator</li>
+            <li>✅ Offline Access</li>
+            <li>✅ No Ads • Cloud Sync</li>
+          </ul>
+          <button class="plan-btn primary glow-btn" onclick="showModal('signupModal')">Start Premium</button>
+        </div>
+        <div class="pricing-card glass-card enterprise">
+          <div class="plan-badge enterprise">🏢 Enterprise</div>
+          <div class="plan-price">
+            <span class="currency">₹</span>
+            <span class="amount" data-monthly="2999" data-yearly="1999">2999</span>
+            <span class="period">/month</span>
+          </div>
+          <div class="plan-name">College / Institute</div>
+          <ul class="plan-features">
+            <li>✅ All Premium Features</li>
+            <li>✅ Teacher Dashboard</li>
+            <li>✅ Student Analytics</li>
+            <li>✅ Attendance Tracking</li>
+            <li>✅ Performance Reports</li>
+            <li>✅ Custom Branding</li>
+            <li>✅ API Access</li>
+            <li>✅ Dedicated Support</li>
+            <li>✅ Bulk Student Onboarding</li>
+            <li>✅ SLA Guarantee</li>
+          </ul>
+          <button class="plan-btn secondary" onclick="contactEnterprise()">Contact Sales</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================== BOTTOM NAV (Mobile) ===================== -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="bnav-item active" onclick="navigateTo('hero')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="bnav-item" onclick="navigateTo('ai-tutor')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <span>AI Tutor</span>
+    </button>
+    <button class="bnav-item" onclick="openFeature('coding')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      <span>Code</span>
+    </button>
+    <button class="bnav-item" onclick="openFeature('quiz')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span>Quiz</span>
+    </button>
+    <button class="bnav-item" onclick="navigateTo('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Dashboard</span>
+    </button>
+    <button class="bnav-item" onclick="showModal('profileModal')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Profile</span>
+    </button>
+  </nav>
+
+  <!-- ===================== MODALS ===================== -->
+  
+  <!-- Login Modal -->
+  <div class="modal-overlay" id="loginModal" onclick="closeModalOutside(event, 'loginModal')">
+    <div class="modal-box glass-card">
+      <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+      <div class="modal-logo">
+        <div class="logo-icon small">🎓</div>
+        <span>EduVerse AI</span>
+      </div>
+      <h2 class="modal-title">Welcome Back!</h2>
+      <p class="modal-subtitle">Sign in to continue your learning journey</p>
+      <div class="social-btns">
+        <button class="social-btn google" onclick="socialLogin('google')">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continue with Google
+        </button>
+        <button class="social-btn github" onclick="socialLogin('github')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          Continue with GitHub
+        </button>
+      </div>
+      <div class="or-divider"><span>or</span></div>
+      <form class="auth-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="loginEmail" placeholder="you@example.com" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-with-icon">
+            <input type="password" id="loginPassword" placeholder="••••••••" required />
+            <button type="button" onclick="togglePassword('loginPassword')">👁</button>
+          </div>
+        </div>
+        <div class="form-meta">
+          <label class="checkbox-label"><input type="checkbox"/> Remember me</label>
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn-form-submit glow-btn">Sign In →</button>
+      </form>
+      <p class="auth-switch">Don't have an account? <a href="#" onclick="switchModal('loginModal','signupModal')">Sign Up Free</a></p>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div class="modal-overlay" id="signupModal" onclick="closeModalOutside(event, 'signupModal')">
+    <div class="modal-box glass-card">
+      <button class="modal-close" onclick="closeModal('signupModal')">✕</button>
+      <div class="modal-logo">
+        <div class="logo-icon small">🎓</div>
+        <span>EduVerse AI</span>
+      </div>
+      <h2 class="modal-title">Join EduVerse AI</h2>
+      <p class="modal-subtitle">Start your premium learning journey today</p>
+      <div class="social-btns">
+        <button class="social-btn google" onclick="socialLogin('google')">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Sign up with Google
+        </button>
+      </div>
+      <div class="or-divider"><span>or</span></div>
+      <form class="auth-form" onsubmit="handleSignup(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="signupFirstName" placeholder="Arjun" required />
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" id="signupLastName" placeholder="Kumar" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="signupEmail" placeholder="you@college.edu" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="signupPassword" placeholder="Min. 8 characters" minlength="8" required />
+        </div>
+        <div class="form-group">
+          <label>College / University</label>
+          <input type="text" id="signupCollege" placeholder="e.g., VTU, IIT Bombay..." />
+        </div>
+        <div class="form-group">
+          <label>Branch</label>
+          <select id="signupBranch">
+            <option>Computer Science & Engineering</option>
+            <option>Electronics & Communication</option>
+            <option>Mechanical Engineering</option>
+            <option>Civil Engineering</option>
+            <option>Information Science</option>
+            <option>Artificial Intelligence & ML</option>
+            <option>Data Science</option>
+            <option>Cyber Security</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-form-submit glow-btn">Create Account Free →</button>
+        <p class="terms-text">By signing up, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
+      </form>
+      <p class="auth-switch">Already have an account? <a href="#" onclick="switchModal('signupModal','loginModal')">Sign In</a></p>
+    </div>
+  </div>
+
+  <!-- Feature Modal -->
+  <div class="modal-overlay feature-modal-overlay" id="featureModal" onclick="closeModalOutside(event, 'featureModal')">
+    <div class="modal-box feature-modal glass-card" id="featureModalContent">
+      <!-- Dynamic content -->
+    </div>
+  </div>
+
+  <!-- Profile Modal -->
+  <div class="modal-overlay" id="profileModal" onclick="closeModalOutside(event, 'profileModal')">
+    <div class="modal-box glass-card">
+      <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <div class="pa-ring"></div>
+          <div class="pa-core">S</div>
+          <div class="pa-level">Lv.12</div>
+        </div>
+        <div class="profile-info">
+          <h2>Student User</h2>
+          <p>student@college.edu</p>
+          <div class="profile-badges">
+            <span class="pb">🔥 21 Streak</span>
+            <span class="pb">⭐ Premium</span>
+            <span class="pb">🏆 #47</span>
+          </div>
+        </div>
+      </div>
+      <div class="profile-stats-mini">
+        <div class="psm">
+          <div class="psm-val">142h</div>
+          <div class="psm-label">Studied</div>
+        </div>
+        <div class="psm">
+          <div class="psm-val">2,840</div>
+          <div class="psm-label">XP</div>
+        </div>
+        <div class="psm">
+          <div class="psm-val">47</div>
+          <div class="psm-label">Quizzes</div>
+        </div>
+        <div class="psm">
+          <div class="psm-val">128</div>
+          <div class="psm-label">Notes</div>
+        </div>
+      </div>
+      <div class="profile-actions">
+        <button class="pa-btn" onclick="closeModal('profileModal');navigateTo('dashboard')">📊 View Dashboard</button>
+        <button class="pa-btn" onclick="openSettings()">⚙️ Settings</button>
+        <button class="pa-btn danger" onclick="logout()">🚪 Sign Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- API Key Setup Modal -->
+  <div class="modal-overlay" id="apiKeyModal" onclick="closeModalOutside(event,'apiKeyModal')">
+    <div class="modal-box glass-card" style="max-width:480px">
+      <button class="modal-close" onclick="closeModal('apiKeyModal')">✕</button>
+      <div style="text-align:center;padding:10px 0 20px">
+        <div style="font-size:3rem;margin-bottom:8px">🔑</div>
+        <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;margin-bottom:6px">Connect Groq AI</h2>
+        <p style="color:var(--text-secondary);font-size:0.85rem;line-height:1.6">Add your free Groq API key to unlock all AI features. Your key is stored locally.</p>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:0.82rem;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px">Groq API Key</label>
+        <div style="position:relative">
+          <input id="apiKeyInput" type="password" placeholder="AIzaSy..." style="width:100%;padding:12px 44px 12px 14px;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-family:'JetBrains Mono',monospace;font-size:0.88rem;outline:none;box-sizing:border-box" />
+          <button onclick="togglePassword('apiKeyInput')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:0.85rem">👁️</button>
+        </div>
+      </div>
+      <div style="background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.2);border-radius:10px;padding:12px 14px;margin-bottom:16px">
+        <div style="font-size:0.8rem;font-weight:700;color:var(--primary-light);margin-bottom:6px">How to get a FREE API key:</div>
+        <ol style="font-size:0.78rem;color:var(--text-secondary);margin:0;padding-left:16px;line-height:1.7">
+          <li>Go to <strong style="color:var(--primary-light)">console.groq.com</strong></li>
+          <li>Sign up or log in to your Groq account</li>
+          <li>Go to API Keys section and create a new key</li>
+          <li>Create a new key (completely free)</li>
+          <li>Copy and paste it above</li>
+        </ol>
+      </div>
+      <button onclick="saveApiKey()" class="btn-primary glow-btn" style="width:100%;padding:13px;font-size:0.95rem;font-weight:700">🚀 Activate All AI Features</button>
+      <button onclick="closeModal('apiKeyModal')" style="width:100%;padding:10px;margin-top:8px;background:none;border:1px solid var(--border);border-radius:10px;color:var(--text-muted);cursor:pointer;font-family:'Inter',sans-serif;font-size:0.85rem">Use Demo Mode (Limited)</button>
+    </div>
+  </div>
+
+  <!-- Loading Screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-content">
+      <div class="loading-logo">🎓</div>
+      <div class="loading-title">EduVerse AI</div>
+      <div class="loading-bar">
+        <div class="loading-progress" id="loadingProgress"></div>
+      </div>
+      <div class="loading-text" id="loadingText">Initializing AI...</div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
