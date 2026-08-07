@@ -2,8 +2,10 @@
 /* All features wired to real backend APIs */
 
 // ===================== CONFIG =====================
-// Use the same server that delivered the page. This works locally and after deployment.
-const API_BASE = window.location.protocol.startsWith('http') ? window.location.origin : 'http://localhost:3001';
+// Use the local server during development and the Render backend after deployment.
+const API_BASE = window.location.hostname === 'localhost'
+  ? 'http://localhost:3001'
+  : 'https://eduverseai-gpmf.onrender.com';
 let SERVER_ONLINE = false;
 
 // ===================== STATE =====================
@@ -345,20 +347,6 @@ function showModal(id) { document.getElementById(id)?.classList.add('open'); }
 function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
 function closeModalOutside(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
 function switchModal(from, to) { closeModal(from); setTimeout(() => showModal(to), 200); }
-
-// ===================== API KEY MANAGEMENT =====================
-function saveApiKey() {
-  const input = document.getElementById('apiKeyInput');
-  if (!input?.value?.trim()) { showToast('Please enter your API key', 'error'); return; }
-  state.apiKey = input.value.trim();
-  localStorage.setItem('groqApiKey', state.apiKey);
-
-  if (SERVER_ONLINE) {
-    api.saveApiKey(state.apiKey).then(() => showToast('✅ API key saved to server!', 'success')).catch(() => {});
-  }
-  closeModal('apiKeyModal');
-  showToast('✅ Groq API key saved! All AI features unlocked.', 'success');
-}
 
 // ===================== AUTH =====================
 function handleLogin(e) {
@@ -3194,19 +3182,12 @@ function showToast(message, type = 'info') {
   setTimeout(() => { toast.classList.add('removing'); setTimeout(() => toast.remove(), 300); }, 3500);
 }
 
-// ===================== SETTINGS SHORTCUT =====================
-function openSettings() {
-  closeModal('profileModal');
-  showModal('apiKeyModal');
-}
-
 // ===================== KEYBOARD SHORTCUTS =====================
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
   if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
     e.preventDefault(); navigateTo('ai-tutor'); setTimeout(() => document.getElementById('chatInput')?.focus(), 300);
   }
-  if (e.key === 'k' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); showModal('apiKeyModal'); }
 });
 
 // ===================== INIT =====================

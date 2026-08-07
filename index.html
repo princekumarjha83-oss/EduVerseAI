@@ -944,7 +944,6 @@
       </div>
       <div class="profile-actions">
         <button class="pa-btn" onclick="closeModal('profileModal');navigateTo('dashboard')">📊 View Dashboard</button>
-        <button class="pa-btn" onclick="openSettings()">⚙️ Settings</button>
         <button class="pa-btn danger" onclick="logout()">🚪 Sign Out</button>
       </div>
     </div>
@@ -952,37 +951,6 @@
 
   <!-- Notification Toast -->
   <div class="toast-container" id="toastContainer"></div>
-
-  <!-- API Key Setup Modal -->
-  <div class="modal-overlay" id="apiKeyModal" onclick="closeModalOutside(event,'apiKeyModal')">
-    <div class="modal-box glass-card" style="max-width:480px">
-      <button class="modal-close" onclick="closeModal('apiKeyModal')">✕</button>
-      <div style="text-align:center;padding:10px 0 20px">
-        <div style="font-size:3rem;margin-bottom:8px">🔑</div>
-        <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;margin-bottom:6px">Connect Groq AI</h2>
-        <p style="color:var(--text-secondary);font-size:0.85rem;line-height:1.6">Add your free Groq API key to unlock all AI features. Your key is stored locally.</p>
-      </div>
-      <div style="margin-bottom:14px">
-        <label style="font-size:0.82rem;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px">Groq API Key</label>
-        <div style="position:relative">
-          <input id="apiKeyInput" type="password" placeholder="AIzaSy..." style="width:100%;padding:12px 44px 12px 14px;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-family:'JetBrains Mono',monospace;font-size:0.88rem;outline:none;box-sizing:border-box" />
-          <button onclick="togglePassword('apiKeyInput')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:0.85rem">👁️</button>
-        </div>
-      </div>
-      <div style="background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.2);border-radius:10px;padding:12px 14px;margin-bottom:16px">
-        <div style="font-size:0.8rem;font-weight:700;color:var(--primary-light);margin-bottom:6px">How to get a FREE API key:</div>
-        <ol style="font-size:0.78rem;color:var(--text-secondary);margin:0;padding-left:16px;line-height:1.7">
-          <li>Go to <strong style="color:var(--primary-light)">console.groq.com</strong></li>
-          <li>Sign up or log in to your Groq account</li>
-          <li>Go to API Keys section and create a new key</li>
-          <li>Create a new key (completely free)</li>
-          <li>Copy and paste it above</li>
-        </ol>
-      </div>
-      <button onclick="saveApiKey()" class="btn-primary glow-btn" style="width:100%;padding:13px;font-size:0.95rem;font-weight:700">🚀 Activate All AI Features</button>
-      <button onclick="closeModal('apiKeyModal')" style="width:100%;padding:10px;margin-top:8px;background:none;border:1px solid var(--border);border-radius:10px;color:var(--text-muted);cursor:pointer;font-family:'Inter',sans-serif;font-size:0.85rem">Use Demo Mode (Limited)</button>
-    </div>
-  </div>
 
   <!-- Loading Screen -->
   <div class="loading-screen" id="loadingScreen">
