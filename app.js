@@ -372,17 +372,8 @@ function handleSignup(e) {
   navigateTo('ai-tutor');
 }
 
-function socialLogin(provider) {
-  closeModal('loginModal'); closeModal('signupModal');
-  showToast(`Connecting with ${provider.charAt(0).toUpperCase() + provider.slice(1)}...`, 'info');
-  setTimeout(() => {
-    state.user = { email: 'user@gmail.com', name: 'Google User', xp: 1200 };
-    localStorage.setItem('user', JSON.stringify(state.user));
-    updateUserNav();
-    showToast('Signed in successfully! 🎉', 'success');
-    navigateTo('dashboard');
-  }, 1200);
-}
+
+
 
 function updateUserNav() {
   const btn = document.querySelector('.nav-actions .btn-secondary');

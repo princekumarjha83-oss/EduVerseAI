@@ -49,7 +49,19 @@ function getSessionUser(token) {
 }
 
 // ==================== MIDDLEWARE ====================
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3001',
+    process.env.FRONTEND_URL || 'https://edu-verse-ai-nqng.vercel.app',
+    /\.vercel\.app$/,
+    /\.onrender\.com$/
+  ],
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static(__dirname, {
@@ -99,10 +111,10 @@ function getGroqClient(apiKey) {
 async function groqGenerate(prompt, apiKey) {
   const client = getGroqClient(apiKey);
   const response = await client.chat.completions.create({
-    model: 'llama-3.1-8b-instant', // Smaller model with higher rate limits
+    model: 'llama-3.3-70b-versatile',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.7,
-    max_tokens: 2048,
+    max_tokens: 4096,
   });
   return response.choices[0]?.message?.content || '';
 }
@@ -114,10 +126,11 @@ async function groqChat(messages, apiKey) {
     content: m.content || m.parts
   }));
   const response = await client.chat.completions.create({
-    model: 'llama-3.1-8b-instant', // Smaller model with higher rate limits
+    model: 'llama-3.3-70b-versatile',
     messages: groqMessages,
     temperature: 0.7,
-    max_tokens: 2048,
+    max_tokens: 4096,
+
   });
   return response.choices[0]?.message?.content || '';
 }
