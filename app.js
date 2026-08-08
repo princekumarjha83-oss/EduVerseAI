@@ -5,7 +5,8 @@
 // Use the local server during development and the Render backend after deployment.
 const API_BASE = window.location.hostname === 'localhost'
   ? 'http://localhost:3001'
-  : 'https://eduverseai-gpmf.onrender.com';
+  : 'https://eduverseai-1.onrender.com';
+
 let SERVER_ONLINE = false;
 
 // ===================== STATE =====================
