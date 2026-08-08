@@ -98,7 +98,17 @@ const upload = multer({
   }
 });
 
-// ==================== AI HELPER (GROQ WITH RATE LIMIT HANDLING) ====================
+
+// ==================== AI HELPER (MULTI-MODEL FALLBACK — NO LIMITS) ====================
+// Models are tried in order. When one hits a rate/token limit, the next is used automatically.
+// Combined daily token budget: ~2,000,000+ tokens across all models.
+const GROQ_MODELS = [
+  { id: 'llama-3.1-8b-instant',       tpd: '500K',  maxTokens: 2048 },
+  { id: 'llama3-8b-8192',             tpd: '500K',  maxTokens: 2048 },
+  { id: 'gemma2-9b-it',               tpd: '500K',  maxTokens: 2048 },
+  { id: 'llama-3.3-70b-versatile',    tpd: '100K',  maxTokens: 1024 },
+  { id: 'mixtral-8x7b-32768',         tpd: '500K',  maxTokens: 2048 },
+];
 
 function getGroqClient(apiKey) {
   const key = process.env.GROQ_API_KEY || apiKey;
@@ -108,69 +118,96 @@ function getGroqClient(apiKey) {
   return new Groq({ apiKey: key });
 }
 
-async function groqGenerate(prompt, apiKey) {
+// Core generator — tries each model until one succeeds
+async function aiGenerate(prompt, apiKey) {
   const client = getGroqClient(apiKey);
-  const response = await client.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.7,
-    max_tokens: 4096,
-  });
-  return response.choices[0]?.message?.content || '';
+  const delay = (ms) => new Promise(r => setTimeout(r, ms));
+  let lastError = null;
+
+  for (const model of GROQ_MODELS) {
+    try {
+      console.log(`Trying model: ${model.id} (${model.tpd} TPD)`);
+      const response = await client.chat.completions.create({
+        model: model.id,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: model.maxTokens,
+      });
+      const text = response.choices[0]?.message?.content || '';
+      console.log(`✅ Success with ${model.id}`);
+      return text;
+    } catch (err) {
+      const msg = err.message || '';
+      const isRateLimit = msg.includes('429') || msg.includes('rate_limit') ||
+                          msg.includes('Rate limit') || msg.includes('TPD') ||
+                          msg.includes('tokens per day') || msg.includes('quota');
+      const isModelUnavailable = msg.includes('model') && (msg.includes('not found') || msg.includes('deprecated'));
+
+      console.log(`❌ ${model.id} failed: ${msg.slice(0, 120)}`);
+      lastError = err;
+
+      if (isRateLimit || isModelUnavailable) {
+        // Try next model in list
+        console.log(`Switching to next model...`);
+        await delay(300); // small pause before switching
+        continue;
+      }
+      // Non-rate-limit error — don't try other models, just throw
+      throw new Error(msg);
+    }
+  }
+
+  // All models exhausted — give a friendly message
+  throw new Error(
+    'All AI models are temporarily at their usage limit. Please wait a few minutes and try again, or come back in a few hours for the daily limit to reset.'
+  );
+}
+
+// Chat variant — tries each model in order for conversation history
+async function aiChat(messages, apiKey) {
+  const client = getGroqClient(apiKey);
+  const delay = (ms) => new Promise(r => setTimeout(r, ms));
+  const groqMessages = messages.map(m => ({
+    role: m.role === 'ai' ? 'assistant' : 'user',
+    content: m.content || m.parts || ''
+  }));
+
+  for (const model of GROQ_MODELS) {
+    try {
+      console.log(`Chat trying model: ${model.id}`);
+      const response = await client.chat.completions.create({
+        model: model.id,
+        messages: groqMessages,
+        temperature: 0.7,
+        max_tokens: model.maxTokens,
+      });
+      console.log(`✅ Chat success with ${model.id}`);
+      return response.choices[0]?.message?.content || '';
+    } catch (err) {
+      const msg = err.message || '';
+      const isRateLimit = msg.includes('429') || msg.includes('rate_limit') ||
+                          msg.includes('Rate limit') || msg.includes('TPD') ||
+                          msg.includes('tokens per day');
+      console.log(`❌ Chat ${model.id} failed: ${msg.slice(0, 80)}`);
+      if (isRateLimit) { await delay(300); continue; }
+      throw new Error(msg);
+    }
+  }
+  throw new Error('All AI models are temporarily at capacity. Please try again shortly.');
+}
+
+// Simple single-model generate (kept for backward compat — now delegates to aiGenerate)
+async function groqGenerate(prompt, apiKey) {
+  return await aiGenerate(prompt, apiKey);
 }
 
 async function groqChat(messages, apiKey) {
-  const client = getGroqClient(apiKey);
-  const groqMessages = messages.map(m => ({
-    role: m.role === 'ai' ? 'assistant' : 'user',
-    content: m.content || m.parts
-  }));
-  const response = await client.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
-    messages: groqMessages,
-    temperature: 0.7,
-    max_tokens: 4096,
-
-  });
-  return response.choices[0]?.message?.content || '';
+  return await aiChat(messages, apiKey);
 }
 
-// Unified AI generation function using Groq with retry for rate limits
-async function aiGenerate(prompt, apiKey, preferFree = false) {
-  const maxRetries = 3;
-  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-  
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      console.log(`Using Groq llama-3.1-8b-instant (attempt ${attempt}/${maxRetries})`);
-      return await groqGenerate(prompt, apiKey);
-    } catch (err) {
-      console.log(`Groq attempt ${attempt} failed:`, err.message);
-      
-      // If it's a rate limit error, wait before retrying
-      if (err.message.includes('rate limit') || err.message.includes('429')) {
-        if (attempt < maxRetries) {
-          const waitTime = 2000 * attempt; // Exponential backoff
-          console.log(`Rate limit hit. Waiting ${waitTime}ms before retry...`);
-          await delay(waitTime);
-          continue;
-        }
-      }
-      
-      // If it's the last attempt or not a rate limit error, throw
-      if (attempt === maxRetries) {
-        throw new Error(`AI generation failed after ${maxRetries} attempts: ${err.message}`);
-      }
-    }
-  }
-}
-
-async function aiChat(messages, apiKey, preferFree = false) {
-  const prompt = messages.map(m => `${m.role === 'ai' ? 'Assistant' : 'User'}: ${m.content || m.parts}`).join('\n');
-  return await aiGenerate(prompt, apiKey, preferFree);
-}
 
 // ==================== CLEANUP HELPER ====================
+
 function deleteFile(filePath) {
   setTimeout(() => {
     try { if (fs.existsSync(filePath)) fs.unlinkSync(filePath); } catch {}
