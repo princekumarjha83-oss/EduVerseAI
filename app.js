@@ -2566,40 +2566,347 @@ async function generateRealPlan() {
 
 // ===================== PLACEMENT SUBJECT MASTERY =====================
 const placementSubjects = {
-  'Data Structures': { explanation: 'Data structures organize data so programs can store, search, and update it efficiently.', chapters: ['Arrays and Strings', 'Linked Lists', 'Stacks and Queues', 'Hashing', 'Trees and BST', 'Heaps', 'Graphs', 'Tries'], questions: ['When would you use an array instead of a linked list?', 'How does a hash table handle collisions?', 'Explain BFS versus DFS and their use cases.'] },
-  'Algorithms': { explanation: 'Algorithms are step-by-step methods for solving problems efficiently and correctly.', chapters: ['Complexity Analysis', 'Sorting', 'Binary Search', 'Two Pointers', 'Sliding Window', 'Recursion', 'Greedy', 'Dynamic Programming', 'Backtracking'], questions: ['Explain time and space complexity using an example.', 'When is dynamic programming better than recursion?', 'How does binary search work and what are its requirements?'] },
-  'DBMS': { explanation: 'A DBMS stores and manages structured data while keeping it consistent, secure, and easy to query.', chapters: ['ER Model', 'Keys and Constraints', 'SQL Queries', 'Joins', 'Normalization', 'Indexes', 'Transactions and ACID', 'Concurrency Control'], questions: ['Explain ACID properties with a banking example.', 'What is normalization and why is it needed?', 'What is the difference between clustered and non-clustered indexes?'] },
-  'Operating Systems': { explanation: 'An operating system manages hardware resources and provides services to programs.', chapters: ['Processes and Threads', 'CPU Scheduling', 'Synchronization', 'Deadlocks', 'Memory Management', 'Virtual Memory', 'File Systems', 'Paging and Segmentation'], questions: ['What is the difference between a process and a thread?', 'Explain deadlock conditions and prevention.', 'What happens during a page fault?'] },
-  'Computer Networks': { explanation: 'Computer networks let devices communicate using protocols, addressing, and reliable data transfer.', chapters: ['OSI and TCP/IP Models', 'IP Addressing', 'Routing', 'TCP and UDP', 'HTTP and HTTPS', 'DNS', 'Sockets', 'Network Security'], questions: ['Compare TCP and UDP.', 'What happens when you enter a URL in a browser?', 'Explain the purpose of DNS.'] },
-  'OOP': { explanation: 'Object-oriented programming structures software around objects that contain data and behavior.', chapters: ['Classes and Objects', 'Encapsulation', 'Inheritance', 'Polymorphism', 'Abstraction', 'Interfaces', 'SOLID Principles', 'Design Patterns'], questions: ['Explain all four pillars of OOP.', 'What is the difference between abstraction and encapsulation?', 'When would you prefer composition over inheritance?'] },
-  'System Design': { explanation: 'System design plans reliable, scalable software services and the components that support them.', chapters: ['Requirements', 'Load Balancing', 'Caching', 'Databases', 'Message Queues', 'Microservices', 'Scalability', 'Monitoring'], questions: ['How would you design a URL shortener?', 'When should you use caching and what are its trade-offs?', 'How would you handle a sudden traffic spike?'] },
-  'Software Engineering': { explanation: 'Software engineering is the disciplined process of designing, building, testing, and maintaining software.', chapters: ['SDLC', 'Agile and Scrum', 'Git and Version Control', 'Testing', 'CI/CD', 'Code Reviews', 'Requirements', 'Design Principles'], questions: ['Explain the stages of SDLC.', 'What is the difference between unit, integration, and end-to-end testing?', 'How does a pull request improve code quality?'] },
-  'Aptitude': { explanation: 'Aptitude tests measure numerical, logical, verbal, and problem-solving ability used in placement assessments.', chapters: ['Percentages', 'Profit and Loss', 'Time and Work', 'Speed and Distance', 'Probability', 'Logical Reasoning', 'Verbal Ability', 'Data Interpretation'], questions: ['How do you calculate percentage increase?', 'What approach do you use for time-and-work questions?', 'How do you solve a logical syllogism?'] }
+  'Data Structures': {
+    icon: '🌲', color: '#2563EB',
+    explanation: 'Data structures organize and store data so programs can access and modify it efficiently.',
+    chapters: ['Arrays & Strings', 'Linked Lists', 'Stacks & Queues', 'Hashing & Hash Maps', 'Trees & BST', 'Heaps & Priority Queues', 'Graphs (BFS/DFS)', 'Tries', 'Segment Trees'],
+    tips: ['Understand time & space complexity for each DS', 'Practice implementing from scratch', 'Know when to use which data structure'],
+    topQuestions: ['What is the difference between array and linked list?', 'Explain how a hash table handles collisions.', 'When would you use a stack vs a queue?', 'What is the time complexity of tree traversal?', 'Explain BFS vs DFS with use cases.']
+  },
+  'Algorithms': {
+    icon: '⚡', color: '#7C3AED',
+    explanation: 'Algorithms are step-by-step problem-solving methods. Mastering them is essential for cracking coding interviews.',
+    chapters: ['Time & Space Complexity', 'Sorting (Quick, Merge, Heap)', 'Binary Search', 'Two Pointers', 'Sliding Window', 'Recursion & Backtracking', 'Dynamic Programming', 'Greedy Algorithms', 'Divide & Conquer'],
+    tips: ['Always analyze Big-O before coding', 'DP: identify overlapping subproblems', 'Greedy: prove correctness with examples'],
+    topQuestions: ['Explain merge sort and its time complexity.', 'What is dynamic programming? Give an example.', 'How does binary search work? What are its requirements?', 'When is a greedy algorithm not optimal?', 'Explain backtracking with N-Queens.']
+  },
+  'DBMS': {
+    icon: '🗄️', color: '#06B6D4',
+    explanation: 'DBMS stores and manages structured data with querying, consistency, and security.',
+    chapters: ['ER Model & Schema', 'Keys & Constraints', 'SQL (SELECT, JOIN, GROUP BY)', 'Normalization (1NF–BCNF)', 'Indexes & Query Optimization', 'Transactions & ACID', 'Concurrency Control', 'NoSQL vs SQL', 'Stored Procedures & Triggers'],
+    tips: ['Practice writing complex SQL joins', 'Understand ACID with real-world examples', 'Know when to use NoSQL over SQL'],
+    topQuestions: ['What are ACID properties? Explain with an example.', 'What is normalization? Why is it needed?', 'Difference between clustered and non-clustered index?', 'What is a deadlock in a DBMS? How is it resolved?', 'Explain different types of SQL JOINs.']
+  },
+  'Operating Systems': {
+    icon: '⚙️', color: '#10B981',
+    explanation: 'An OS manages hardware resources and provides services like process scheduling, memory management, and I/O.',
+    chapters: ['Processes & Threads', 'CPU Scheduling Algorithms', 'Process Synchronization', 'Deadlock Detection & Prevention', 'Memory Management', 'Virtual Memory & Paging', 'File Systems', 'I/O Systems', 'Linux Commands'],
+    tips: ['Draw process state diagrams', 'Know all CPU scheduling algorithms', 'Understand virtual memory & page faults'],
+    topQuestions: ['What is the difference between a process and a thread?', 'Explain deadlock and the four Coffman conditions.', 'What happens during a page fault?', 'Compare preemptive vs non-preemptive scheduling.', 'What is thrashing in virtual memory?']
+  },
+  'Computer Networks': {
+    icon: '🌐', color: '#F59E0B',
+    explanation: 'Computer networks enable devices to communicate using protocols, addressing, and reliable data transfer.',
+    chapters: ['OSI & TCP/IP Models', 'IP Addressing & Subnetting', 'Routing Protocols', 'TCP vs UDP', 'HTTP/HTTPS & REST', 'DNS & DHCP', 'Sockets Programming', 'Network Security (SSL/TLS)', 'CDN & Load Balancing'],
+    tips: ['Memorize OSI layers with a mnemonic', 'Understand the 3-way TCP handshake', 'Know what happens when you type a URL'],
+    topQuestions: ['Explain the OSI model layers with their functions.', 'Compare TCP and UDP — when is each used?', 'What happens step-by-step when you type google.com?', 'What is the purpose of DNS?', 'Explain SSL/TLS handshake.']
+  },
+  'OOP': {
+    icon: '🧩', color: '#EF4444',
+    explanation: 'OOP structures software around objects that bundle data and behavior, making code reusable and maintainable.',
+    chapters: ['Classes & Objects', 'Encapsulation', 'Inheritance', 'Polymorphism (Compile & Runtime)', 'Abstraction & Interfaces', 'SOLID Principles', 'Design Patterns (Singleton, Factory)', 'Exception Handling', 'Generics & Collections'],
+    tips: ['Explain each pillar with a real-world example', 'Know the difference between abstract class and interface', 'Understand SOLID with code examples'],
+    topQuestions: ['Explain the four pillars of OOP with examples.', 'Difference between abstraction and encapsulation?', 'When would you use composition over inheritance?', 'What is method overloading vs method overriding?', 'Explain the Singleton design pattern.']
+  },
+  'System Design': {
+    icon: '🏗️', color: '#8B5CF6',
+    explanation: 'System design is about planning scalable, reliable software systems that handle millions of users.',
+    chapters: ['Requirements Gathering', 'Load Balancing', 'Caching (Redis, Memcached)', 'Database Sharding & Replication', 'Message Queues (Kafka, RabbitMQ)', 'Microservices vs Monolith', 'CAP Theorem', 'Rate Limiting & API Gateway', 'Monitoring & Logging'],
+    tips: ['Always clarify requirements first', 'Think about scale: 10x, 100x users', 'Trade-offs: consistency vs availability'],
+    topQuestions: ['How would you design a URL shortener?', 'Design a WhatsApp-like messaging system.', 'When should you use caching and what are trade-offs?', 'Explain the CAP theorem with examples.', 'How would you handle a sudden 10x traffic spike?']
+  },
+  'Software Engineering': {
+    icon: '🛠️', color: '#EC4899',
+    explanation: 'SE is the disciplined process of designing, building, testing, and maintaining reliable software at scale.',
+    chapters: ['SDLC Models', 'Agile & Scrum', 'Git & Version Control', 'Unit/Integration/E2E Testing', 'CI/CD Pipelines', 'Code Review Best Practices', 'REST API Design', 'Microservices', 'Docker & Kubernetes basics'],
+    tips: ['Know Agile ceremonies: Sprint, Standup, Retrospective', 'Understand Git branching strategies', 'Practice writing testable code'],
+    topQuestions: ['Explain the stages of SDLC.', 'What is the difference between unit, integration, and E2E testing?', 'How does a pull request improve code quality?', 'Explain CI/CD pipeline with a real example.', 'What is the purpose of Docker in development?']
+  },
+  'Aptitude': {
+    icon: '🧠', color: '#14B8A6',
+    explanation: 'Aptitude tests measure quantitative, logical, and verbal reasoning — used heavily in campus placement drives.',
+    chapters: ['Percentages & Ratios', 'Profit, Loss & Discount', 'Time, Work & Pipes', 'Speed, Distance & Time', 'Probability & Permutations', 'Number Series & Patterns', 'Logical Reasoning & Puzzles', 'Verbal Ability & RC', 'Data Interpretation'],
+    tips: ['Practice mental math tricks for speed', 'Eliminate wrong options in MCQs', 'Time yourself — speed matters in aptitude tests'],
+    topQuestions: ['If A can do a job in 10 days and B in 15, how long together?', 'A train 150m long crosses a pole in 15 seconds. Find its speed.', 'What is the probability of getting 2 heads in 3 coin tosses?', 'Find the next number: 2, 6, 12, 20, 30, ?', 'If cost price is ₹800 and profit is 25%, what is the selling price?']
+  }
 };
 
+// Track which batches of questions have been generated per subject
+if (!state.placementQuestionHistory) state.placementQuestionHistory = {};
+if (!state.placementQuestionCount) state.placementQuestionCount = {};
+
 function showPlacementSubject(subject) {
-  const data = placementSubjects[subject]; const target = document.getElementById('placementSubjectDetails');
+  const data = placementSubjects[subject];
+  const target = document.getElementById('placementSubjectDetails');
   if (!data || !target) return;
-  document.querySelectorAll('.placement-subject-card').forEach(card => card.classList.toggle('active', card.querySelector('strong')?.textContent === subject));
-  target.innerHTML = `<h3 style="margin-bottom:8px">${subject}</h3><p style="color:var(--text-secondary);line-height:1.6"><b>Simple explanation:</b> ${data.explanation}</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px"><div><h4>Important chapters</h4><ol style="color:var(--text-secondary);line-height:1.8;padding-left:20px">${data.chapters.map(chapter => `<li>${chapter}</li>`).join('')}</ol></div><div><h4>Common interview questions</h4><ol style="color:var(--text-secondary);line-height:1.8;padding-left:20px">${data.questions.map(question => `<li>${question}</li>`).join('')}</ol></div></div><div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:16px"><button onclick="loadPlacementSubjectQuestions('${subject}', true)" class="ai-code-btn blue">Generate important questions</button><button onclick="loadPlacementSubjectQuestions('${subject}', false)" class="ai-code-btn purple">∞ Load 10 more questions</button><button onclick="openFeature('placement');setTimeout(()=>showPlacementTab('interview', document.querySelector('.ptab-btn:nth-child(2)')),150)" class="ai-code-btn green">Practice interview questions</button></div><div id="placementQuestions" style="margin-top:16px"></div>`;
+
+  // Highlight the active card
+  document.querySelectorAll('.placement-subject-card').forEach(card => {
+    card.classList.toggle('active', card.querySelector('strong')?.textContent === subject);
+  });
+
+  target.innerHTML = `
+    <div style="background:linear-gradient(135deg,${data.color}15,${data.color}08);border:1px solid ${data.color}30;border-radius:16px;padding:24px;margin-top:16px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span style="font-size:2.2rem">${data.icon}</span>
+        <div>
+          <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-size:1.3rem;color:var(--text-primary)">${subject}</h3>
+          <p style="margin:4px 0 0;color:var(--text-secondary);font-size:.88rem;line-height:1.5">${data.explanation}</p>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+        <div style="background:var(--bg-glass);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <h4 style="margin:0 0 10px;font-size:.9rem;color:${data.color}">📚 Chapters to Cover</h4>
+          <ol style="color:var(--text-secondary);line-height:2;padding-left:20px;margin:0;font-size:.85rem">
+            ${data.chapters.map(c => `<li>${c}</li>`).join('')}
+          </ol>
+        </div>
+        <div style="background:var(--bg-glass);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <h4 style="margin:0 0 10px;font-size:.9rem;color:${data.color}">🎯 Top Interview Questions</h4>
+          <ol style="color:var(--text-secondary);line-height:1.9;padding-left:20px;margin:0;font-size:.85rem">
+            ${data.topQuestions.map(q => `<li>${q}</li>`).join('')}
+          </ol>
+          <div style="margin-top:12px;padding:10px;background:${data.color}10;border-radius:8px">
+            <div style="font-size:.78rem;font-weight:700;color:${data.color};margin-bottom:4px">💡 Pro Tips</div>
+            ${data.tips.map(t => `<div style="font-size:.78rem;color:var(--text-secondary);padding:2px 0">• ${t}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button onclick="loadPlacementSubjectQuestions('${subject}', true)" 
+          style="display:flex;align-items:center;gap:7px;padding:10px 18px;background:${data.color};color:#fff;border:none;border-radius:10px;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif"
+          onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+          🤖 Generate AI Questions
+        </button>
+        <button onclick="loadPlacementSubjectQuestions('${subject}', false)"
+          style="display:flex;align-items:center;gap:7px;padding:10px 18px;background:transparent;color:${data.color};border:2px solid ${data.color}60;border-radius:10px;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif"
+          onmouseover="this.style.borderColor='${data.color}'" onmouseout="this.style.borderColor='${data.color}60'">
+          ∞ Load 10 More Questions
+        </button>
+        <button onclick="generateSubjectQuiz('${subject}')"
+          style="display:flex;align-items:center;gap:7px;padding:10px 18px;background:transparent;color:#10b981;border:2px solid #10b98160;border-radius:10px;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif"
+          onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#10b98160'">
+          📝 Quick Quiz (10 MCQs)
+        </button>
+        <button onclick="generateSubjectNotes('${subject}')"
+          style="display:flex;align-items:center;gap:7px;padding:10px 18px;background:transparent;color:#f59e0b;border:2px solid #f59e0b60;border-radius:10px;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif"
+          onmouseover="this.style.borderColor='#f59e0b'" onmouseout="this.style.borderColor='#f59e0b60'">
+          📖 AI Study Notes
+        </button>
+      </div>
+
+      <div id="placementQuestions" style="margin-top:18px"></div>
+      <div id="placementQuizArea" style="margin-top:18px"></div>
+    </div>
+  `;
   target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 async function loadPlacementSubjectQuestions(subject, reset = false) {
   const output = document.getElementById('placementQuestions');
   if (!output) return;
+
   if (reset) state.placementQuestionHistory[subject] = [];
   const previous = state.placementQuestionHistory[subject] || [];
-  output.innerHTML = '<div style="padding:14px;color:var(--text-muted)">Generating important questions for this subject...</div>';
+  const batchNum = previous.length + 1;
+  const color = placementSubjects[subject]?.color || '#2563EB';
+
+  output.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-muted)">
+    <div style="font-size:1.5rem;margin-bottom:8px">🤖</div>
+    Generating batch ${batchNum} — 10 unique questions for <b>${subject}</b>...
+  </div>`;
+
   try {
-    if (!SERVER_ONLINE) throw new Error('Connect the backend to generate unlimited AI questions.');
-    const data = await api.chat(`Create 10 important placement and interview questions for the subject: ${subject}. Cover different chapters and difficulty levels. For every question provide a concise expected answer and one interview tip. Use clear markdown headings. Do not repeat these already-used questions: ${previous.slice(-20).join(' | ')}`, `${subject} Placement Preparation`);
-    state.placementQuestionHistory[subject] = [...previous, data.response];
-    output.innerHTML = `<div style="font-size:.8rem;color:var(--primary-light);margin-bottom:8px">Question batch ${state.placementQuestionHistory[subject].length} • Unlimited questions</div>` + state.placementQuestionHistory[subject].map((batch, index) => `<div style="margin:10px 0;padding:14px;border:1px solid var(--border);border-radius:10px"><b>Batch ${index + 1}</b>${formatMarkdown(batch)}</div>`).join('');
+    const excludeNote = previous.length > 0
+      ? `Do NOT repeat any question from these previous batches: "${previous.slice(-3).join(' | ')}"` : '';
+
+    const prompt = `You are an expert placement trainer. Generate exactly 10 unique and important interview/placement questions for the subject: "${subject}".
+
+${excludeNote}
+
+For each question:
+1. Write the question clearly
+2. Give a concise but complete expected answer (3-5 sentences)
+3. Add one practical interview tip
+
+Cover different difficulty levels (Easy, Medium, Hard) and different chapters within ${subject}.
+Use **bold** for question numbers and question text.
+Format clearly with markdown.`;
+
+    const data = await api.call('/api/chat', 'POST', { message: prompt, subject: `${subject} Placement` });
+    const responseText = data.response || data.message || '';
+
+    state.placementQuestionHistory[subject] = [...previous, responseText];
+    const totalBatches = state.placementQuestionHistory[subject].length;
+
+    output.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:.82rem;font-weight:700;color:${color}">
+          ✅ Batch ${totalBatches} loaded • ${totalBatches * 10} total questions generated
+        </div>
+        <div style="display:flex;gap:8px">
+          <button onclick="loadPlacementSubjectQuestions('${subject}', false)"
+            style="padding:6px 14px;background:${color};color:#fff;border:none;border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">
+            ∞ Load More
+          </button>
+          <button onclick="document.getElementById('placementQuestions').innerHTML=''"
+            style="padding:6px 14px;background:var(--bg-glass);color:var(--text-secondary);border:1px solid var(--border);border-radius:8px;font-size:.78rem;cursor:pointer;font-family:'Inter',sans-serif">
+            Clear
+          </button>
+        </div>
+      </div>
+      ${state.placementQuestionHistory[subject].map((batch, i) => `
+        <div style="margin-bottom:16px;padding:18px;background:var(--bg-glass);border:1px solid var(--border);border-left:3px solid ${color};border-radius:12px">
+          <div style="font-size:.78rem;color:${color};font-weight:700;margin-bottom:10px">📋 Question Batch ${i + 1}</div>
+          <div style="font-size:.86rem;line-height:1.8;color:var(--text-primary)">${formatMarkdown(batch)}</div>
+        </div>
+      `).join('')}
+    `;
+    updateXP(10);
   } catch (err) {
-    output.innerHTML = `<span style="color:var(--danger)">Error: ${err.message}</span>`;
+    output.innerHTML = `<div style="color:var(--danger);padding:14px;border:1px solid var(--danger)30;border-radius:10px">
+      ❌ ${err.message}
+    </div>`;
   }
 }
+
+// Quick 10-question MCQ quiz for any placement subject
+async function generateSubjectQuiz(subject) {
+  const quizArea = document.getElementById('placementQuizArea');
+  if (!quizArea) return;
+  const color = placementSubjects[subject]?.color || '#2563EB';
+
+  quizArea.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-muted)">
+    <div style="font-size:1.5rem;margin-bottom:8px">📝</div> Generating 10 MCQs for ${subject}...
+  </div>`;
+
+  try {
+    const prompt = `Create a 10-question multiple choice quiz for the subject: "${subject}" targeting engineering placement exams.
+
+Return ONLY valid JSON array, no markdown, no extra text:
+[
+  {
+    "q": "Question text?",
+    "options": ["A) Option1", "B) Option2", "C) Option3", "D) Option4"],
+    "answer": "A) Option1",
+    "explanation": "Brief explanation of why this is correct."
+  }
+]
+
+Make questions realistic, varied in difficulty, and cover different chapters of ${subject}.`;
+
+    const data = await api.call('/api/chat', 'POST', { message: prompt, subject: `${subject} Quiz` });
+    let questions = [];
+    try {
+      const jsonMatch = (data.response || '').match(/\[[\s\S]*\]/);
+      questions = JSON.parse(jsonMatch ? jsonMatch[0] : data.response);
+    } catch {
+      throw new Error('Quiz generation failed — please try again.');
+    }
+
+    let quizState = { current: 0, score: 0, answered: new Array(questions.length).fill(null) };
+
+    function renderQuizQuestion() {
+      const q = questions[quizState.current];
+      if (!q) return;
+      const answered = quizState.answered[quizState.current];
+      quizArea.innerHTML = `
+        <div style="background:var(--bg-glass);border:1px solid var(--border);border-radius:14px;padding:20px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:16px;font-size:.82rem;color:var(--text-muted)">
+            <span>📝 ${subject} Quiz</span>
+            <span>Question <b style="color:${color}">${quizState.current + 1}</b> / ${questions.length} • Score: <b style="color:#10b981">${quizState.score}</b></span>
+          </div>
+          <div style="font-weight:700;font-size:.95rem;line-height:1.6;margin-bottom:18px;color:var(--text-primary)">${q.q}</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            ${q.options.map((opt, i) => {
+              let bg = 'var(--bg-tertiary)', border = 'var(--border)', clr = 'var(--text-secondary)';
+              if (answered !== null) {
+                if (opt === q.answer) { bg = '#10b98115'; border = '#10b981'; clr = '#10b981'; }
+                else if (i === answered && opt !== q.answer) { bg = '#ef444415'; border = '#ef4444'; clr = '#ef4444'; }
+              }
+              return `<button onclick="answerQuizQ(${i})" 
+                style="text-align:left;padding:11px 16px;background:${bg};border:1.5px solid ${border};border-radius:10px;color:${clr};font-size:.86rem;cursor:${answered !== null ? 'default' : 'pointer'};font-family:'Inter',sans-serif;transition:all .2s"
+                ${answered !== null ? 'disabled' : `onmouseover="if(!this.disabled)this.style.borderColor='${color}'" onmouseout="if(!this.disabled)this.style.borderColor='var(--border)'"`}>
+                ${opt}
+              </button>`;
+            }).join('')}
+          </div>
+          ${answered !== null ? `
+            <div style="margin-top:14px;padding:12px;background:${quizState.answered[quizState.current] === q.options.indexOf(q.answer) ? '#10b98112' : '#ef444412'};border:1px solid ${quizState.answered[quizState.current] === q.options.indexOf(q.answer) ? '#10b981' : '#ef4444'}40;border-radius:10px;font-size:.84rem;color:var(--text-secondary)">
+              <b>💡 Explanation:</b> ${q.explanation}
+            </div>
+            <div style="margin-top:12px;text-align:right">
+              ${quizState.current < questions.length - 1
+                ? `<button onclick="nextQuizQ()" style="padding:9px 22px;background:${color};color:#fff;border:none;border-radius:9px;font-weight:600;font-size:.85rem;cursor:pointer;font-family:'Inter',sans-serif">Next →</button>`
+                : `<button onclick="showQuizResult()" style="padding:9px 22px;background:#10b981;color:#fff;border:none;border-radius:9px;font-weight:600;font-size:.85rem;cursor:pointer;font-family:'Inter',sans-serif">🏆 See Results</button>`}
+            </div>
+          ` : ''}
+        </div>`;
+
+      window.answerQuizQ = (optIndex) => {
+        if (quizState.answered[quizState.current] !== null) return;
+        quizState.answered[quizState.current] = optIndex;
+        if (q.options[optIndex] === q.answer) quizState.score++;
+        renderQuizQuestion();
+      };
+      window.nextQuizQ = () => { quizState.current++; renderQuizQuestion(); };
+      window.showQuizResult = () => {
+        const pct = Math.round((quizState.score / questions.length) * 100);
+        const grade = pct >= 80 ? '🏆 Excellent!' : pct >= 60 ? '👍 Good Job!' : '📚 Keep Practicing!';
+        quizArea.innerHTML = `<div style="text-align:center;padding:28px;background:var(--bg-glass);border:1px solid var(--border);border-radius:14px">
+          <div style="font-size:3rem;margin-bottom:12px">${pct >= 80 ? '🏆' : pct >= 60 ? '🎯' : '📚'}</div>
+          <div style="font-size:1.4rem;font-weight:800;color:var(--text-primary);margin-bottom:6px">${grade}</div>
+          <div style="font-size:2.5rem;font-weight:900;color:${color};margin-bottom:4px">${quizState.score}/${questions.length}</div>
+          <div style="font-size:1rem;color:var(--text-muted);margin-bottom:20px">${pct}% Score</div>
+          <div style="height:8px;background:var(--bg-tertiary);border-radius:4px;overflow:hidden;margin-bottom:20px">
+            <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,${color},#10b981);border-radius:4px;transition:width 1s"></div>
+          </div>
+          <button onclick="generateSubjectQuiz('${subject}')" style="padding:11px 28px;background:${color};color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">
+            🔄 Try Again (New Questions)
+          </button>
+        </div>`;
+      };
+    }
+    renderQuizQuestion();
+    updateXP(5);
+  } catch (err) {
+    quizArea.innerHTML = `<div style="color:var(--danger);padding:14px;border-radius:10px;border:1px solid #ef444430">❌ ${err.message}</div>`;
+  }
+}
+
+// Generate detailed AI study notes for a subject
+async function generateSubjectNotes(subject) {
+  const output = document.getElementById('placementQuestions');
+  if (!output) return;
+  const color = placementSubjects[subject]?.color || '#2563EB';
+
+  output.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-muted)">
+    <div style="font-size:1.5rem;margin-bottom:8px">📖</div>
+    Generating comprehensive study notes for <b>${subject}</b>...
+  </div>`;
+
+  try {
+    const data = await api.call('/api/notes', 'POST', {
+      topic: subject,
+      subject: 'Placement Preparation',
+      type: 'comprehensive'
+    });
+    output.innerHTML = `
+      <div style="background:var(--bg-glass);border:1px solid ${color}40;border-left:3px solid ${color};border-radius:12px;padding:20px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div style="font-size:.82rem;font-weight:700;color:${color}">📖 AI Study Notes — ${subject}</div>
+          <button onclick="generateSubjectNotes('${subject}')" style="padding:5px 12px;background:${color};color:#fff;border:none;border-radius:7px;font-size:.75rem;cursor:pointer;font-family:'Inter',sans-serif">🔄 Regenerate</button>
+        </div>
+        <div style="font-size:.86rem;line-height:1.85;color:var(--text-primary)">${formatMarkdown(data.notes || '')}</div>
+      </div>`;
+    updateXP(8);
+  } catch (err) {
+    output.innerHTML = `<div style="color:var(--danger);padding:14px;border-radius:10px;border:1px solid #ef444430">❌ ${err.message}</div>`;
+  }
+}
+
 
 // ===================== PLACEMENT HUB =====================
 function renderPlacement() {
