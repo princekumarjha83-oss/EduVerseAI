@@ -313,7 +313,7 @@ function animateCounter(el) {
 
 // ===================== NAVIGATION =====================
 function navigateTo(id) {
-  if (!state.user && id !== 'hero') { showAuthGate(); return; }
+  // Login is optional — guests can access all sections freely
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById(id)?.classList.add('active');
   state.currentSection = id;
@@ -432,19 +432,37 @@ async function restoreAuthentication() {
   const error = params.get('authError');
   if (token) { localStorage.setItem('authToken', token); window.history.replaceState({}, '', window.location.pathname); }
   if (error) { window.history.replaceState({}, '', window.location.pathname); showToast('Google sign-in could not be completed.', 'error'); }
-  if (!localStorage.getItem('authToken')) { state.user = null; localStorage.removeItem('user'); showAuthGate(); return; }
+  // If no token saved — just run as guest, no blocking gate
+  if (!localStorage.getItem('authToken')) {
+    state.user = null;
+    localStorage.removeItem('user');
+    // Show auth gate only if not already dismissed as guest
+    if (!sessionStorage.getItem('guestMode')) {
+      showAuthGate();
+    }
+    return;
+  }
   try { completeAuthentication({ user: (await api.me()).user }); }
-  catch { state.user = null; localStorage.removeItem('user'); localStorage.removeItem('authToken'); showAuthGate(); }
+  catch { state.user = null; localStorage.removeItem('user'); localStorage.removeItem('authToken'); }
+}
+
+// Guest mode — skip login entirely
+function continueAsGuest() {
+  sessionStorage.setItem('guestMode', 'true');
+  hideAuthGate();
+  showToast('Welcome, Guest! All features are available — sign in anytime to save your progress.', 'info');
+  navigateTo('hero');
 }
 
 async function logout() {
   try { await api.logout(); } catch {}
   state.user = null; localStorage.removeItem('user'); localStorage.removeItem('authToken');
+  sessionStorage.removeItem('guestMode');
   closeModal('profileModal');
   const btn = document.querySelector('.nav-actions .btn-secondary');
   if (btn) { btn.textContent = 'Log In'; btn.onclick = () => showModal('loginModal'); }
-  showAuthGate();
-  showToast('Signed out. See you soon!', 'info'); navigateTo('hero');
+  showToast('Signed out. See you soon!', 'info');
+  navigateTo('hero');
 }
 
 function togglePassword(id) {

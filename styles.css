@@ -1498,6 +1498,28 @@ body {
 .auth-gate-actions { display: grid; grid-template-columns: 1fr 1.3fr; gap: 12px; }
 .auth-gate-actions button { justify-content: center; }
 
+/* Guest / skip-login button */
+.guest-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; margin-top: 14px;
+  padding: 11px 20px;
+  background: transparent;
+  border: 1px dashed rgba(255,255,255,0.18);
+  border-radius: 10px;
+  color: var(--text-secondary);
+  font-size: 0.88rem; font-weight: 500; letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.guest-btn:hover {
+  border-color: rgba(255,255,255,0.35);
+  color: var(--text-primary);
+  background: rgba(255,255,255,0.04);
+  transform: translateY(-1px);
+}
+.guest-btn svg { opacity: 0.7; }
+
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
