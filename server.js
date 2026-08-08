@@ -205,34 +205,64 @@ app.post('/api/auth/logout', (req, res) => {
 });
 
 app.get('/api/auth/google', (req, res) => {
-  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) return res.status(503).send('Google sign-in is not configured. Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to .env.');
+  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) return res.status(503).send('Google sign-in is not configured.');
   const state = crypto.randomBytes(24).toString('hex');
   googleStates.set(state, Date.now() + 10 * 60 * 1000);
-  const redirectUri = process.env.GOOGLE_REDIRECT_URI || `${req.protocol}://${req.get('host')}/api/auth/google/callback`;
-  const params = new URLSearchParams({ client_id: process.env.GOOGLE_CLIENT_ID, redirect_uri: redirectUri, response_type: 'code', scope: 'openid email profile', state, prompt: 'select_account' });
+  // GOOGLE_REDIRECT_URI must match exactly what is set in Google Cloud Console
+  const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+  if (!redirectUri) return res.status(503).send('GOOGLE_REDIRECT_URI env variable not set.');
+  const params = new URLSearchParams({
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    redirect_uri: redirectUri,
+    response_type: 'code',
+    scope: 'openid email profile',
+    state,
+    prompt: 'select_account'
+  });
   res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`);
 });
 
 app.get('/api/auth/google/callback', async (req, res) => {
+  // After Google auth, we redirect the user BACK to the frontend (Vercel) with their token
+  const FRONTEND_URL = process.env.FRONTEND_URL || 'https://edu-verse-ai-nqng.vercel.app';
   const { code, state: oauthState, error } = req.query;
   const expiresAt = googleStates.get(oauthState);
   googleStates.delete(oauthState);
-  if (error || !code || !expiresAt || expiresAt < Date.now()) return res.redirect('/?authError=google');
+  if (error || !code || !expiresAt || expiresAt < Date.now()) {
+    return res.redirect(`${FRONTEND_URL}/?authError=google`);
+  }
   try {
-    const redirectUri = process.env.GOOGLE_REDIRECT_URI || `${req.protocol}://${req.get('host')}/api/auth/google/callback`;
-    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ code, client_id: process.env.GOOGLE_CLIENT_ID, client_secret: process.env.GOOGLE_CLIENT_SECRET, redirect_uri: redirectUri, grant_type: 'authorization_code' }).toString() });
+    const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        code,
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: redirectUri,
+        grant_type: 'authorization_code'
+      }).toString()
+    });
     const tokenData = await tokenResponse.json();
     if (!tokenResponse.ok || !tokenData.access_token) throw new Error('Google token exchange failed');
-    const profileResponse = await fetch('https://openidconnect.googleapis.com/v1/userinfo', { headers: { Authorization: `Bearer ${tokenData.access_token}` } });
+    const profileResponse = await fetch('https://openidconnect.googleapis.com/v1/userinfo', {
+      headers: { Authorization: `Bearer ${tokenData.access_token}` }
+    });
     const profile = await profileResponse.json();
     if (!profileResponse.ok || !profile.email || !profile.email_verified) throw new Error('Google did not provide a verified email');
     const users = readUsers();
     let user = users.find(item => item.email === profile.email.toLowerCase());
-    if (!user) { user = { id: crypto.randomUUID(), email: profile.email.toLowerCase(), name: profile.name || profile.email.split('@')[0], provider: 'google', googleId: profile.sub, createdAt: new Date().toISOString() }; users.push(user); writeUsers(users); }
-    res.redirect(`/?authToken=${createSession(user)}`);
+    if (!user) {
+      user = { id: crypto.randomUUID(), email: profile.email.toLowerCase(), name: profile.name || profile.email.split('@')[0], provider: 'google', googleId: profile.sub, createdAt: new Date().toISOString() };
+      users.push(user);
+      writeUsers(users);
+    }
+    // Redirect back to the Vercel frontend with the session token
+    res.redirect(`${FRONTEND_URL}/?authToken=${createSession(user)}`);
   } catch (err) {
     console.error('Google authentication failed:', err.message);
-    res.redirect('/?authError=google');
+    res.redirect(`${FRONTEND_URL}/?authError=google`);
   }
 });
 

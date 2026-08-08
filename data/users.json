@@ -14,5 +14,23 @@
     "provider": "google",
     "googleId": "108842898920479040700",
     "createdAt": "2026-08-07T14:50:32.521Z"
+  },
+  {
+    "id": "0e52c814-79ed-43e3-bf21-708cce77646e",
+    "email": "princekumarjhacse2027@gmail.com",
+    "name": "princekumar jha",
+    "provider": "google",
+    "googleId": "100642288014304719909",
+    "createdAt": "2026-08-07T16:33:59.380Z"
+  },
+  {
+    "id": "1681f5a9-32aa-4a34-9f83-65defaa3c8b9",
+    "email": "princekumarjha@gmail.com",
+    "name": "prince jha",
+    "college": "vtu",
+    "branch": "Computer Science & Engineering",
+    "passwordHash": "742a5ab0eefb254ab51021f9a2f1207e:7a9877beb6fda60eeaae484f763541539297948d62f8819d88373d6343ad6cdef3261ace5d8a4861b42e82d0c5c0832bf58cecf46efcfed6ce0395b2df95956c",
+    "provider": "password",
+    "createdAt": "2026-08-07T18:20:18.920Z"
   }
 ]
