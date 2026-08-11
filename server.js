@@ -684,52 +684,6 @@ Questions should test deep understanding, not just memorization. Include practic
   }
 });
 
-// ==================== PYQ ANALYSIS ====================
-app.post('/api/pyq', upload.array('files', 5), async (req, res) => {
-  const filePaths = req.files?.map(f => f.path) || [];
-  try {
-    const { subject, apiKey, textContent } = req.body;
-
-    let allText = textContent || '';
-    
-    // Process uploaded files if any
-    for (const filePath of filePaths) {
-      if (filePath.endsWith('.pdf')) {
-        try {
-          const pdfParse = require('pdf-parse');
-          const data = await pdfParse(fs.readFileSync(filePath));
-          allText += data.text.substring(0, 5000) + '\n\n';
-        } catch {}
-      } else if (fs.readFileSync(filePath).toString().slice(0, 4).includes('text')) {
-        allText += fs.readFileSync(filePath, 'utf-8').substring(0, 5000) + '\n\n';
-      }
-    }
-
-    const prompt = `Analyze these Previous Year Question Papers (PYQs) for ${subject || 'Engineering'}.
-
-Content:
-${allText || 'Previous year question papers for ' + (subject || 'Engineering')}
-
-Provide:
-1. **Frequently Repeated Topics** - Topics appearing in multiple years (with count)
-2. **Important Units** - Most exam-heavy units/chapters
-3. **Question Patterns** - Types of questions asked (derivation, definition, numerical, etc.)
-4. **High Probability Topics** - Likely to appear in upcoming exam
-5. **Safe Bet Questions** - Almost certain to come
-6. **Trend Analysis** - How question patterns have changed
-7. **Preparation Strategy** - Based on PYQ analysis
-
-Use markdown with tables and bullet points. Be specific and actionable.`;
-
-    const analysis = await aiGenerate(prompt, apiKey);
-    filePaths.forEach(deleteFile);
-    res.json({ analysis });
-  } catch (err) {
-    filePaths.forEach(deleteFile);
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // ==================== CODE REVIEW ====================
 app.post('/api/code/review', async (req, res) => {
   try {

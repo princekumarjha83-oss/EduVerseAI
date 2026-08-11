@@ -930,7 +930,6 @@ function renderPDFAssistant() {
             {icon:'🎯',label:'Quiz',action:"pdfAction('quiz')"},
             {icon:'🗺️',label:'Mind Map',action:"pdfAction('mindmap')"},
             {icon:'❓',label:'Viva Q&A',action:"pdfAction('viva')"},
-            {icon:'📊',label:'PYQ Analysis',action:"pdfPYQ()"},
           ].map(i => `<button onclick="${i.action}" class="pdf-action-btn">${i.icon}<br/><span>${i.label}</span></button>`).join('')}
         </div>
         <div id="pdfActionOutput" style="display:none;margin-top:16px;max-height:350px;overflow-y:auto;padding:16px;background:var(--bg-glass);border:1px solid var(--border);border-radius:12px;font-size:0.88rem;line-height:1.7"></div>
@@ -1110,24 +1109,6 @@ async function pdfAction(type) {
   }
 }
 
-async function pdfPYQ() {
-  const output = document.getElementById('pdfActionOutput');
-  if (!output || !state.currentPDFText) { showToast('Please upload a file first', 'warning'); return; }
-  output.style.display = 'block';
-  output.innerHTML = `<div style="text-align:center;padding:20px">⏳ Analyzing your document as Previous Year Questions...</div>`;
-  try {
-    const data = await api.call('/api/pyq', 'POST', {
-      subject: state.currentSubject,
-      textContent: state.currentPDFText,
-      apiKey: state.apiKey
-    });
-    output.innerHTML = formatMarkdown(data.analysis);
-    showToast('📊 PYQ Analysis complete!', 'success');
-  } catch (err) {
-    output.innerHTML = `<span style="color:var(--danger)">Error: ${err.message}</span>`;
-    showToast(err.message, 'error');
-  }
-}
 
 function renderPDFQuizQuestion() {
   const container = document.getElementById('pdfQuizContainer');
