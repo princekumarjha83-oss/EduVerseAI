@@ -105,7 +105,6 @@ const upload = multer({
 const GROQ_MODELS = [
   { id: 'llama-3.1-8b-instant',       tpd: '500K',  maxTokens: 2048 },
   { id: 'llama-3.3-70b-versatile',    tpd: '100K',  maxTokens: 1024 },
-  { id: 'llama-3.1-70b-versatile',    tpd: '500K',  maxTokens: 1024 },
   { id: 'gemma-7b-it',                tpd: '500K',  maxTokens: 2048 },
 ];
 
