@@ -106,6 +106,8 @@ const GROQ_MODELS = [
   { id: 'llama-3.1-8b-instant',       tpd: '500K',  maxTokens: 2048 },
   { id: 'llama-3.3-70b-versatile',    tpd: '100K',  maxTokens: 1024 },
   { id: 'gemma-7b-it',                tpd: '500K',  maxTokens: 2048 },
+  { id: 'llama3-70b-8192',            tpd: '500K',  maxTokens: 2048 },
+  { id: 'mixtral-8x7b-instruct',      tpd: '500K',  maxTokens: 2048 },
 ];
 
 function getGroqClient(apiKey) {
