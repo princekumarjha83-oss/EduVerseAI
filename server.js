@@ -104,7 +104,6 @@ const upload = multer({
 // Combined daily token budget: ~2,000,000+ tokens across all models.
 const GROQ_MODELS = [
   { id: 'llama-3.1-8b-instant',       tpd: '500K',  maxTokens: 2048 },
-  { id: 'gemma2-9b-it',               tpd: '500K',  maxTokens: 2048 },
   { id: 'llama-3.3-70b-versatile',    tpd: '100K',  maxTokens: 1024 },
   { id: 'mixtral-8x7b-32768',         tpd: '500K',  maxTokens: 2048 },
 ];
