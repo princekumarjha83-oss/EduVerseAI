@@ -103,11 +103,9 @@ const upload = multer({
 // Models are tried in order. When one hits a rate/token limit, the next is used automatically.
 // Combined daily token budget: ~2,000,000+ tokens across all models.
 const GROQ_MODELS = [
-  { id: 'llama-3.1-8b-instant',       tpd: '500K',  maxTokens: 2048 },
-  { id: 'llama-3.3-70b-versatile',    tpd: '100K',  maxTokens: 1024 },
-  { id: 'gemma-7b-it',                tpd: '500K',  maxTokens: 2048 },
-  { id: 'llama3-70b-8192',            tpd: '500K',  maxTokens: 2048 },
-  { id: 'mixtral-8x7b-instruct',      tpd: '500K',  maxTokens: 2048 },
+  { id: 'llama-3.1-8b-instant',       tpd: '500K',  maxTokens: 8192 },
+  { id: 'gemma2-9b-it',               tpd: '500K',  maxTokens: 8192 },
+  { id: 'llama-3.3-70b-versatile',    tpd: '100K',  maxTokens: 8192 },
 ];
 
 function getGroqClient(apiKey) {
@@ -118,13 +116,65 @@ function getGroqClient(apiKey) {
   return new Groq({ apiKey: key });
 }
 
+// Cache for available models to avoid repeated API calls
+let cachedModels = null;
+let modelsCacheTime = 0;
+const MODELS_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Fetch available models from Groq API dynamically
+async function fetchAvailableModels(apiKey) {
+  const now = Date.now();
+  if (cachedModels && (now - modelsCacheTime) < MODELS_CACHE_DURATION) {
+    return cachedModels;
+  }
+
+  try {
+    const client = getGroqClient(apiKey);
+    const response = await client.models.list();
+    
+    // Known decommissioned models to exclude
+    const decommissionedModels = ['llama3-8b-8192', 'llama3-70b-8192', 'mixtral-8x7b-instruct'];
+    
+    const availableModels = response.data
+      .filter(model => 
+        model.active === true && 
+        !model.id.includes('whisper') && 
+        !model.id.includes('guard') &&
+        !decommissionedModels.includes(model.id)
+      )
+      .map(model => ({
+        id: model.id,
+        maxTokens: Math.min(model.context_window || 8192, 8192),
+        tpd: '500K'
+      }))
+      .slice(0, 5); // Use top 5 available models
+    
+    // If no models found after filtering, use fallback
+    if (availableModels.length === 0) {
+      console.log('No valid models found from API, using fallback');
+      return GROQ_MODELS;
+    }
+    
+    cachedModels = availableModels;
+    modelsCacheTime = now;
+    console.log('Fetched available models:', availableModels.map(m => m.id));
+    return availableModels;
+  } catch (err) {
+    console.log('Failed to fetch models, using fallback:', err.message);
+    return GROQ_MODELS; // Fallback to hardcoded models
+  }
+}
+
 // Core generator — tries each model until one succeeds
 async function aiGenerate(prompt, apiKey) {
   const client = getGroqClient(apiKey);
   const delay = (ms) => new Promise(r => setTimeout(r, ms));
   let lastError = null;
 
-  for (const model of GROQ_MODELS) {
+  // Use dynamic model fetching to get available models
+  const models = await fetchAvailableModels(apiKey);
+
+  for (const model of models) {
     try {
       console.log(`Trying model: ${model.id} (${model.tpd} TPD)`);
       const response = await client.chat.completions.create({
@@ -141,25 +191,34 @@ async function aiGenerate(prompt, apiKey) {
       const isRateLimit = msg.includes('429') || msg.includes('rate_limit') ||
                           msg.includes('Rate limit') || msg.includes('TPD') ||
                           msg.includes('tokens per day') || msg.includes('quota');
-      const isModelUnavailable = msg.includes('model') && (msg.includes('not found') || msg.includes('deprecated'));
+      const isModelUnavailable = msg.includes('model') && (msg.includes('not found') || msg.includes('deprecated') || msg.includes('does not exist') || msg.includes('invalid_request_error'));
+      const isAuthError = msg.includes('401') || msg.includes('Unauthorized') || msg.includes('authentication');
 
       console.log(`❌ ${model.id} failed: ${msg.slice(0, 120)}`);
       lastError = err;
 
+      // If it's an auth error, don't try other models - the API key is invalid
+      if (isAuthError) {
+        throw new Error('Invalid API key. Please check your GROQ_API_KEY in Settings.');
+      }
+
+      // For rate limits or model issues, try next model
       if (isRateLimit || isModelUnavailable) {
-        // Try next model in list
         console.log(`Switching to next model...`);
         await delay(300); // small pause before switching
         continue;
       }
-      // Non-rate-limit error — don't try other models, just throw
-      throw new Error(msg);
+      
+      // For any other error, also try next model to be safe
+      console.log(`Unexpected error, trying next model...`);
+      await delay(300);
+      continue;
     }
   }
 
   // All models exhausted — give a friendly message
   throw new Error(
-    'All AI models are temporarily at their usage limit. Please wait a few minutes and try again, or come back in a few hours for the daily limit to reset.'
+    'All AI models are temporarily unavailable or at their usage limit. Please wait a few minutes and try again.'
   );
 }
 
@@ -172,7 +231,10 @@ async function aiChat(messages, apiKey) {
     content: m.content || m.parts || ''
   }));
 
-  for (const model of GROQ_MODELS) {
+  // Use dynamic model fetching to get available models
+  const models = await fetchAvailableModels(apiKey);
+
+  for (const model of models) {
     try {
       console.log(`Chat trying model: ${model.id}`);
       const response = await client.chat.completions.create({
@@ -187,13 +249,29 @@ async function aiChat(messages, apiKey) {
       const msg = err.message || '';
       const isRateLimit = msg.includes('429') || msg.includes('rate_limit') ||
                           msg.includes('Rate limit') || msg.includes('TPD') ||
-                          msg.includes('tokens per day');
+                          msg.includes('tokens per day') || msg.includes('quota');
+      const isModelUnavailable = msg.includes('model') && (msg.includes('not found') || msg.includes('deprecated') || msg.includes('does not exist') || msg.includes('invalid_request_error'));
+      const isAuthError = msg.includes('401') || msg.includes('Unauthorized') || msg.includes('authentication');
+
       console.log(`❌ Chat ${model.id} failed: ${msg.slice(0, 80)}`);
-      if (isRateLimit) { await delay(300); continue; }
-      throw new Error(msg);
+
+      // If it's an auth error, don't try other models
+      if (isAuthError) {
+        throw new Error('Invalid API key. Please check your GROQ_API_KEY in Settings.');
+      }
+
+      // For rate limits or model issues, try next model
+      if (isRateLimit || isModelUnavailable) {
+        await delay(300);
+        continue;
+      }
+      
+      // For any other error, also try next model to be safe
+      await delay(300);
+      continue;
     }
   }
-  throw new Error('All AI models are temporarily at capacity. Please try again shortly.');
+  throw new Error('All AI models are temporarily unavailable or at their usage limit. Please wait a few minutes and try again.');
 }
 
 // Simple single-model generate (kept for backward compat — now delegates to aiGenerate)
